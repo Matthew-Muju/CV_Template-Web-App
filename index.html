@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV Template Builder - Create Professional Resumes</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <a href="#" class="logo">
+                    <i class="material-icons">description</i>
+                    CV Builder
+                </a>
+                <ul class="nav-links">
+                    <li><a href="#" id="reset-btn">Reset</a></li>
+                    <li><a href="#" id="help-btn">Help</a></li>
+                </ul>
+                <button class="theme-toggle" id="theme-toggle">
+                    <i class="material-icons">dark_mode</i>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <div class="app-container">
+        <aside class="sidebar">
+            <h3>Choose Template</h3>
+            <div class="template-selector">
+                <div class="template-option active" data-template="professional">
+                    <i class="material-icons">business</i>
+                    <span>Professional</span>
+                </div>
+                <div class="template-option" data-template="modern">
+                    <i class="material-icons">trending_up</i>
+                    <span>Modern</span>
+                </div>
+                <div class="template-option" data-template="creative">
+                    <i class="material-icons">palette</i>
+                    <span>Creative</span>
+                </div>
+                <div class="template-option" data-template="minimal">
+                    <i class="material-icons">minimize</i>
+                    <span>Minimal</span>
+                </div>
+                <div class="template-option" data-template="dark">
+                    <i class="material-icons">nights_stay</i>
+                    <span>Dark</span>
+                </div>
+                <div class="template-option" data-template="academic">
+                    <i class="material-icons">school</i>
+                    <span>Academic</span>
+                </div>
+                <div class="template-option" data-template="executive">
+                    <i class="material-icons">account_balance</i>
+                    <span>Executive</span>
+                </div>
+                <div class="template-option" data-template="tech">
+                    <i class="material-icons">code</i>
+                    <span>Tech</span>
+                </div>
+                <div class="template-option" data-template="creative2">
+                    <i class="material-icons">brush</i>
+                    <span>Creative 2</span>
+                </div>
+                <div class="template-option" data-template="portfolio">
+                    <i class="material-icons">collections</i>
+                    <span>Portfolio</span>
+                </div>
+            </div>
+
+            <h3>Personal Information</h3>
+            <div class="form-section">
+                <div class="form-group">
+                    <label for="full-name">Full Name</label>
+                    <input type="text" id="full-name" class="form-control" placeholder="John Doe">
+                </div>
+                <div class="form-group">
+                    <label for="job-title">Job Title</label>
+                    <input type="text" id="job-title" class="form-control" placeholder="Software Developer">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" class="form-control" placeholder="john@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <input type="tel" id="phone" class="form-control" placeholder="+1 234 567 8900">
+                </div>
+                <div class="form-group">
+                    <label for="location">Location</label>
+                    <input type="text" id="location" class="form-control" placeholder="New York, NY">
+                </div>
+                <div class="form-group">
+                    <label for="website">Website</label>
+                    <input type="text" id="website" class="form-control" placeholder="www.example.com">
+                </div>
+            </div>
+
+            <h3>Summary</h3>
+            <div class="form-section">
+                <div class="form-group">
+                    <label for="summary">Professional Summary</label>
+                    <textarea id="summary" class="form-control" rows="4" placeholder="Brief description about yourself..."></textarea>
+                </div>
+            </div>
+
+            <h3>Experience</h3>
+            <div class="form-section">
+                <div class="form-group">
+                    <label for="exp-title">Job Title</label>
+                    <input type="text" id="exp-title" class="form-control" placeholder="Software Developer">
+                </div>
+                <div class="form-group">
+                    <label for="exp-company">Company</label>
+                    <input type="text" id="exp-company" class="form-control" placeholder="Tech Company">
+                </div>
+                <div class="form-group">
+                    <label for="exp-date">Date</label>
+                    <input type="text" id="exp-date" class="form-control" placeholder="Jan 2020 - Present">
+                </div>
+                <div class="form-group">
+                    <label for="exp-description">Description</label>
+                    <textarea id="exp-description" class="form-control" rows="3" placeholder="Describe your responsibilities and achievements..."></textarea>
+                </div>
+            </div>
+
+            <h3>Education</h3>
+            <div class="form-section">
+                <div class="form-group">
+                    <label for="edu-degree">Degree</label>
+                    <input type="text" id="edu-degree" class="form-control" placeholder="Bachelor of Science">
+                </div>
+                <div class="form-group">
+                    <label for="edu-school">School</label>
+                    <input type="text" id="edu-school" class="form-control" placeholder="University Name">
+                </div>
+                <div class="form-group">
+                    <label for="edu-date">Date</label>
+                    <input type="text" id="edu-date" class="form-control" placeholder="2015 - 2019">
+                </div>
+            </div>
+
+            <h3>Skills</h3>
+            <div class="form-section">
+                <div class="form-group">
+                    <label for="skills">Skills (comma separated)</label>
+                    <input type="text" id="skills" class="form-control" placeholder="JavaScript, React, Node.js, MongoDB">
+                </div>
+            </div>
+        </aside>
+
+        <main class="cv-preview-container">
+            <div id="cv-preview" class="cv-preview">
+                <div class="cv-header">
+                    <div class="cv-photo">
+                        <i class="material-icons" style="font-size: 48px; color: var(--text-secondary);">account_circle</i>
+                    </div>
+                    <div class="cv-basic-info">
+                        <h1 id="preview-name">Your Name</h1>
+                        <h2 id="preview-title">Your Job Title</h2>
+                        <div class="cv-contact">
+                            <div class="cv-contact-item">
+                                <i class="material-icons">email</i>
+                                <span id="preview-email">your.email@example.com</span>
+                            </div>
+                            <div class="cv-contact-item">
+                                <i class="material-icons">phone</i>
+                                <span id="preview-phone">+1 234 567 8900</span>
+                            </div>
+                            <div class="cv-contact-item">
+                                <i class="material-icons">location_on</i>
+                                <span id="preview-location">Your Location</span>
+                            </div>
+                            <div class="cv-contact-item">
+                                <i class="material-icons">language</i>
+                                <span id="preview-website">www.yourwebsite.com</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cv-section">
+                    <h3>Summary</h3>
+                    <p id="preview-summary">Your professional summary goes here. Briefly describe your background, skills, and what makes you a great candidate.</p>
+                </div>
+
+                <div class="cv-section">
+                    <h3>Experience</h3>
+                    <div class="cv-item">
+                        <div class="cv-item-header">
+                            <div class="cv-item-title" id="preview-exp-title">Job Title</div>
+                            <div class="cv-item-date" id="preview-exp-date">Date</div>
+                        </div>
+                        <div class="cv-item-subtitle" id="preview-exp-company">Company Name</div>
+                        <div class="cv-item-description" id="preview-exp-description">Description of your responsibilities and achievements in this role.</div>
+                    </div>
+                </div>
+
+                <div class="cv-section">
+                    <h3>Education</h3>
+                    <div class="cv-item">
+                        <div class="cv-item-header">
+                            <div class="cv-item-title" id="preview-edu-degree">Degree</div>
+                            <div class="cv-item-date" id="preview-edu-date">Date</div>
+                        </div>
+                        <div class="cv-item-subtitle" id="preview-edu-school">School Name</div>
+                    </div>
+                </div>
+
+                <div class="cv-section">
+                    <h3>Skills</h3>
+                    <div class="cv-skills" id="preview-skills">
+                        <div class="skill-tag">Skill 1</div>
+                        <div class="skill-tag">Skill 2</div>
+                        <div class="skill-tag">Skill 3</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn btn-secondary" id="print-btn">
+                    <i class="material-icons">print</i>
+                    Print
+                </button>
+                <button class="btn btn-primary" id="download-pdf-btn">
+                    <i class="material-icons">picture_as_pdf</i>
+                    Download PDF
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>

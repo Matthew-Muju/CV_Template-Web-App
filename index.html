@@ -3,25 +3,1808 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CV Template Builder - Create Professional Resumes</title>
+    <title>Personal CV Builder - Advanced Resume Creator</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --primary-light: #818cf8;
+            --primary-dark: #4f46e5;
+            --secondary-color: #22d3ee;
+            --accent-color: #f43f5e;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-tertiary: #94a3b8;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --card-bg: #ffffff;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-accent: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        [data-theme="dark"] {
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-tertiary: #64748b;
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --card-bg: #1e293b;
+            --border-color: #334155;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.25);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-accent: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: var(--transition);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(34, 211, 238, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 20%, rgba(244, 63, 94, 0.1) 0%, transparent 50%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+            background-color: rgba(var(--bg-primary), 0.8);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--gradient-primary);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover::after {
+            transform: translateX(0);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient-primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .theme-toggle {
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: 50px;
+            padding: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: var(--transition);
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theme-toggle::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .theme-toggle:hover::before {
+            width: 100px;
+            height: 100px;
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Main App Container */
+        .app-container {
+            display: flex;
+            min-height: calc(100vh - 70px);
+            position: relative;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 320px;
+            background-color: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            padding: 2rem 1.5rem;
+            overflow-y: auto;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 1px;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, var(--primary-color), transparent);
+            opacity: 0.3;
+        }
+
+        .sidebar h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+            font-weight: 600;
+            position: relative;
+            padding-left: 1rem;
+        }
+
+        .sidebar h3::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 20px;
+            background: var(--gradient-primary);
+            border-radius: 2px;
+        }
+
+        .template-selector {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .template-option {
+            background-color: var(--card-bg);
+            border: 2px solid transparent;
+            border-radius: var(--radius);
+            padding: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .template-option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-primary);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .template-option:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .template-option:hover::before {
+            opacity: 0.1;
+        }
+
+        .template-option.active {
+            border-color: var(--primary-color);
+            background-color: rgba(99, 102, 241, 0.1);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .template-option i {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .template-option span {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        /* Form Styles */
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            background-color: var(--card-bg);
+            color: var(--text-primary);
+            transition: var(--transition);
+            font-size: 0.95rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* CV Preview */
+        .cv-preview-container {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            position: relative;
+            background: radial-gradient(circle at 80% 20%, rgba(99, 102, 241, 0.05) 0%, transparent 50%);
+        }
+
+        .cv-preview {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-xl);
+            padding: 2.5rem;
+            min-height: 800px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cv-preview::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--gradient-primary);
+        }
+
+        /* CV Template Styles */
+        .cv-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .cv-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: var(--bg-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 2rem;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            position: relative;
+        }
+
+        .cv-photo::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            opacity: 0.1;
+        }
+
+        .cv-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .cv-basic-info h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .cv-basic-info h2 {
+            font-size: 1.25rem;
+            font-weight: 400;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .cv-contact {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .cv-contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .cv-contact-item i {
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+
+        .cv-section {
+            margin-bottom: 2.5rem;
+            position: relative;
+        }
+
+        .cv-section h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            position: relative;
+            padding-bottom: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .cv-section h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: var(--gradient-primary);
+            border-radius: 2px;
+        }
+
+        .cv-item {
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .cv-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.5rem;
+            width: 8px;
+            height: 8px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+        }
+
+        .cv-item-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .cv-item-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+        }
+
+        .cv-item-date {
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .cv-item-subtitle {
+            color: var(--primary-color);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .cv-item-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .cv-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .skill-tag {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+
+        .skill-tag:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            position: sticky;
+            bottom: 2rem;
+            right: 2rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .btn-secondary {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gradient-accent);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        /* Template Specific Styles */
+        .template-modern .cv-header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 2rem;
+            border-radius: var(--radius);
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .template-modern .cv-header::before {
+            display: none;
+        }
+
+        .template-modern .cv-basic-info h1,
+        .template-modern .cv-basic-info h2,
+        .template-modern .cv-contact-item {
+            color: white;
+        }
+
+        .template-modern .cv-contact-item i {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .template-modern .cv-section h3::after {
+            background: var(--gradient-secondary);
+        }
+
+        .template-modern .skill-tag {
+            background: var(--gradient-secondary);
+        }
+
+        .template-creative .cv-header {
+            text-align: center;
+            flex-direction: column;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(34, 211, 238, 0.1) 100%);
+            padding: 2rem;
+            border-radius: var(--radius);
+            margin-bottom: 2rem;
+        }
+
+        .template-creative .cv-photo {
+            margin-right: 0;
+            margin-bottom: 1rem;
+            width: 140px;
+            height: 140px;
+        }
+
+        .template-creative .cv-basic-info h1 {
+            font-size: 2.8rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .template-creative .cv-section h3 {
+            text-align: center;
+            width: 100%;
+        }
+
+        .template-creative .cv-section h3::after {
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .template-creative .cv-item {
+            padding-left: 0;
+        }
+
+        .template-creative .cv-item::before {
+            display: none;
+        }
+
+        .template-minimal .cv-section h3 {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            font-weight: 300;
+            font-size: 1.8rem;
+            color: var(--text-primary);
+        }
+
+        .template-minimal .cv-section h3::after {
+            display: none;
+        }
+
+        .template-minimal .cv-item {
+            padding-left: 0;
+        }
+
+        .template-minimal .cv-item::before {
+            display: none;
+        }
+
+        .template-minimal .cv-item-title {
+            font-weight: 400;
+        }
+
+        .template-minimal .skill-tag {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .template-dark {
+            background-color: #1a1a2e;
+            color: #eee;
+        }
+
+        .template-dark .cv-header {
+            border-bottom-color: #16213e;
+        }
+
+        .template-dark .cv-section h3 {
+            color: #e94560;
+        }
+
+        .template-dark .cv-section h3::after {
+            background: linear-gradient(90deg, #e94560, #0f3460);
+        }
+
+        .template-dark .cv-item-subtitle {
+            color: #0f3460;
+        }
+
+        .template-dark .skill-tag {
+            background: linear-gradient(135deg, #e94560, #0f3460);
+        }
+
+        .template-academic .cv-header {
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 1.5rem;
+        }
+
+        .template-academic .cv-basic-info h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .template-academic .cv-section h3 {
+            font-size: 1.3rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-primary);
+        }
+
+        .template-academic .cv-section h3::after {
+            background: var(--text-primary);
+        }
+
+        .template-academic .cv-item-date {
+            font-style: italic;
+        }
+
+        .template-executive .cv-header {
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 1.5rem;
+        }
+
+        .template-executive .cv-basic-info h1 {
+            font-size: 2.3rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .template-executive .cv-section h3 {
+            font-size: 1.4rem;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .template-executive .cv-section h3::after {
+            display: none;
+        }
+
+        .template-executive .cv-item {
+            padding-left: 0;
+            border-left: 3px solid var(--primary-color);
+            padding-left: 1rem;
+        }
+
+        .template-executive .cv-item::before {
+            display: none;
+        }
+
+        .template-tech .cv-header {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: white;
+            padding: 2rem;
+            border-radius: var(--radius);
+            margin-bottom: 2rem;
+        }
+
+        .template-tech .cv-header::before {
+            display: none;
+        }
+
+        .template-tech .cv-basic-info h1,
+        .template-tech .cv-basic-info h2,
+        .template-tech .cv-contact-item {
+            color: white;
+        }
+
+        .template-tech .cv-contact-item i {
+            color: #22d3ee;
+        }
+
+        .template-tech .cv-section h3 {
+            color: #22d3ee;
+        }
+
+        .template-tech .cv-section h3::after {
+            background: linear-gradient(90deg, #22d3ee, #0f0c29);
+        }
+
+        .template-tech .skill-tag {
+            background: linear-gradient(135deg, #22d3ee, #0f0c29);
+        }
+
+        .template-creative2 .cv-header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: var(--radius);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .template-creative2 .cv-header::before {
+            display: none;
+        }
+
+        .template-creative2 .cv-photo {
+            margin: 0 auto 1rem;
+            width: 130px;
+            height: 130px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .template-creative2 .cv-basic-info h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .template-creative2 .cv-section h3 {
+            color: #f5576c;
+        }
+
+        .template-creative2 .cv-section h3::after {
+            background: linear-gradient(90deg, #f093fb, #f5576c);
+        }
+
+        .template-creative2 .skill-tag {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+
+        .template-portfolio .cv-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .template-portfolio .cv-photo {
+            width: 150px;
+            height: 150px;
+            border-radius: var(--radius);
+            margin-right: 2rem;
+        }
+
+        .template-portfolio .cv-basic-info h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .template-portfolio .cv-section h3 {
+            font-size: 1.6rem;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .template-portfolio .cv-section h3::after {
+            display: none;
+        }
+
+        .template-portfolio .cv-item {
+            padding-left: 0;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+        }
+
+        .template-portfolio .cv-item::before {
+            display: none;
+        }
+
+        .template-portfolio .skill-tag {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-size: 1rem;
+            padding: 0.5rem 1.2rem;
+        }
+
+        /* Advanced Features Styles */
+        .feature-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            overflow-x: auto;
+        }
+
+        .feature-tab {
+            padding: 0.75rem 1rem;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            cursor: pointer;
+            position: relative;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .feature-tab.active {
+            color: var(--primary-color);
+        }
+
+        .feature-tab::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--gradient-primary);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-tab.active::after {
+            transform: scaleX(1);
+        }
+
+        .feature-panel {
+            display: none;
+        }
+
+        .feature-panel.active {
+            display: block;
+        }
+
+        .ai-suggestion {
+            background-color: rgba(99, 102, 241, 0.1);
+            border-left: 3px solid var(--primary-color);
+            padding: 1rem;
+            border-radius: var(--radius);
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .ai-suggestion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .ai-suggestion-title {
+            font-weight: 600;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .ai-suggestion-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .ai-suggestion-action {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        .ai-suggestion-action:hover {
+            background-color: rgba(99, 102, 241, 0.1);
+            color: var(--primary-color);
+        }
+
+        .analytics-card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .analytics-card h4 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .analytics-chart {
+            height: 200px;
+            margin-bottom: 1rem;
+        }
+
+        .analytics-metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .analytics-metric:last-child {
+            border-bottom: none;
+        }
+
+        .analytics-metric-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .analytics-metric-value {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .collaboration-panel {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .collaboration-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .collaboration-title {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .collaboration-link {
+            color: var(--primary-color);
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .collaboration-link:hover {
+            text-decoration: underline;
+        }
+
+        .collaboration-list {
+            list-style: none;
+        }
+
+        .collaboration-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .collaboration-item:last-child {
+            border-bottom: none;
+        }
+
+        .collaboration-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--bg-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .collaboration-info {
+            flex: 1;
+        }
+
+        .collaboration-name {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .collaboration-date {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .collaboration-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--warning-color);
+        }
+
+        .status-approved {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+        }
+
+        .status-rejected {
+            background-color: rgba(244, 63, 94, 0.1);
+            color: var(--accent-color);
+        }
+
+        .integration-card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .integration-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: var(--radius);
+            background-color: var(--bg-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+        }
+
+        .integration-info {
+            flex: 1;
+        }
+
+        .integration-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .integration-description {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .integration-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .status-connected {
+            color: var(--success-color);
+        }
+
+        .status-disconnected {
+            color: var(--text-secondary);
+        }
+
+        .integration-action {
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+            font-size: 0.9rem;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .connect-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .connect-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .disconnect-btn {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .disconnect-btn:hover {
+            background-color: var(--border-color);
+        }
+
+        .customization-panel {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .customization-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .color-palette {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .color-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: var(--transition);
+        }
+
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+
+        .color-option.active {
+            border-color: var(--text-primary);
+        }
+
+        .font-selector {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .font-option {
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .font-option:hover {
+            background-color: var(--border-color);
+        }
+
+        .font-option.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .layout-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+        }
+
+        .layout-option {
+            aspect-ratio: 3/4;
+            border-radius: var(--radius);
+            background-color: var(--bg-tertiary);
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+        }
+
+        .layout-option:hover {
+            border-color: var(--primary-color);
+        }
+
+        .layout-option.active {
+            border-color: var(--primary-color);
+            background-color: rgba(99, 102, 241, 0.1);
+        }
+
+        .accessibility-panel {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .accessibility-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .accessibility-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .accessibility-option:last-child {
+            border-bottom: none;
+        }
+
+        .accessibility-label {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .accessibility-name {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .accessibility-description {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--bg-tertiary);
+            transition: var(--transition);
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: var(--transition);
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(24px);
+        }
+
+        .future-panel {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .future-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .future-feature {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .future-feature:last-child {
+            border-bottom: none;
+        }
+
+        .future-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius);
+            background-color: var(--bg-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            flex-shrink: 0;
+        }
+
+        .future-info {
+            flex: 1;
+        }
+
+        .future-name {
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .future-description {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .future-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            background-color: rgba(99, 102, 241, 0.1);
+            color: var(--primary-color);
+        }
+
+        /* Print Styles */
+        @media print {
+            .sidebar, .action-buttons, header {
+                display: none;
+            }
+
+            .cv-preview-container {
+                padding: 0;
+            }
+
+            .cv-preview {
+                box-shadow: none;
+                border-radius: 0;
+                padding: 0;
+            }
+
+            body {
+                background-color: white;
+                color: black;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .app-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+        }
+
+        /* Animation Classes */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Notification Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--gradient-primary);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-xl);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: var(--transition);
+            z-index: 1000;
+            font-weight: 500;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Floating Elements */
+        .floating-element {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            opacity: 0.1;
+            z-index: -1;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-element-1 {
+            width: 80px;
+            height: 80px;
+            top: 10%;
+            right: 5%;
+            animation-delay: 0s;
+        }
+
+        .floating-element-2 {
+            width: 60px;
+            height: 60px;
+            bottom: 20%;
+            left: 3%;
+            animation-delay: 2s;
+        }
+
+        .floating-element-3 {
+            width: 100px;
+            height: 100px;
+            top: 60%;
+            right: 10%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-tertiary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-xl);
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background-color: var(--bg-primary);
+                flex-direction: column;
+                padding: 1rem;
+                box-shadow: var(--shadow-lg);
+                transform: translateY(-100%);
+                opacity: 0;
+                visibility: hidden;
+                transition: var(--transition);
+                z-index: 99;
+            }
+
+            .nav-links.show {
+                transform: translateY(0);
+                opacity: 1;
+                visibility: visible;
+            }
+
+            .sidebar {
+                position: fixed;
+                top: 70px;
+                left: -320px;
+                height: calc(100vh - 70px);
+                z-index: 98;
+                transition: var(--transition);
+            }
+
+            .sidebar.show {
+                left: 0;
+            }
+
+            .cv-preview-container {
+                margin-left: 0;
+            }
+
+            .sidebar-toggle {
+                display: block;
+                position: fixed;
+                bottom: 20px;
+                left: 20px;
+                width: 56px;
+                height: 56px;
+                border-radius: 50%;
+                background: var(--gradient-primary);
+                color: white;
+                border: none;
+                box-shadow: var(--shadow-lg);
+                z-index: 99;
+                cursor: pointer;
+                transition: var(--transition);
+            }
+
+            .sidebar-toggle:hover {
+                transform: scale(1.1);
+            }
+        }
+    </style>
 </head>
 <body>
     <header>
         <div class="container">
             <nav>
+                <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+                    <i class="material-icons">menu</i>
+                </button>
                 <a href="#" class="logo">
                     <i class="material-icons">description</i>
-                    CV Builder
+                    Personal CV Builder
                 </a>
-                <ul class="nav-links">
+                <ul class="nav-links" id="nav-links">
                     <li><a href="#" id="reset-btn">Reset</a></li>
                     <li><a href="#" id="help-btn">Help</a></li>
+                    <li><a href="#" id="analytics-btn">Analytics</a></li>
+                    <li><a href="#" id="collaboration-btn">Collaborate</a></li>
+                    <li><a href="#" id="integrations-btn">Integrations</a></li>
                 </ul>
                 <button class="theme-toggle" id="theme-toggle">
                     <i class="material-icons">dark_mode</i>
@@ -31,7 +1814,11 @@
     </header>
 
     <div class="app-container">
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
+            <div class="floating-element floating-element-1"></div>
+            <div class="floating-element floating-element-2"></div>
+            <div class="floating-element floating-element-3"></div>
+            
             <h3>Choose Template</h3>
             <div class="template-selector">
                 <div class="template-option active" data-template="professional">
@@ -76,83 +1863,334 @@
                 </div>
             </div>
 
-            <h3>Personal Information</h3>
-            <div class="form-section">
-                <div class="form-group">
-                    <label for="full-name">Full Name</label>
-                    <input type="text" id="full-name" class="form-control" placeholder="John Doe">
+            <div class="feature-tabs">
+                <button class="feature-tab active" data-tab="basic">Basic Info</button>
+                <button class="feature-tab" data-tab="ai">AI Assistant</button>
+                <button class="feature-tab" data-tab="customize">Customize</button>
+                <button class="feature-tab" data-tab="accessibility">Accessibility</button>
+                <button class="feature-tab" data-tab="future">Future Tech</button>
+            </div>
+
+            <div class="feature-panel active" id="basic-panel">
+                <h3>Personal Information</h3>
+                <div class="form-section">
+                    <div class="form-group">
+                        <label for="full-name">Full Name</label>
+                        <input type="text" id="full-name" class="form-control" placeholder="John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label for="job-title">Job Title</label>
+                        <input type="text" id="job-title" class="form-control" placeholder="Software Developer">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" class="form-control" placeholder="john@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone</label>
+                        <input type="tel" id="phone" class="form-control" placeholder="+1 234 567 8900">
+                    </div>
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" class="form-control" placeholder="New York, NY">
+                    </div>
+                    <div class="form-group">
+                        <label for="website">Website</label>
+                        <input type="text" id="website" class="form-control" placeholder="www.example.com">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="job-title">Job Title</label>
-                    <input type="text" id="job-title" class="form-control" placeholder="Software Developer">
+
+                <h3>Summary</h3>
+                <div class="form-section">
+                    <div class="form-group">
+                        <label for="summary">Professional Summary</label>
+                        <textarea id="summary" class="form-control" rows="4" placeholder="Brief description about yourself..."></textarea>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" class="form-control" placeholder="john@example.com">
+
+                <h3>Experience</h3>
+                <div class="form-section">
+                    <div class="form-group">
+                        <label for="exp-title">Job Title</label>
+                        <input type="text" id="exp-title" class="form-control" placeholder="Software Developer">
+                    </div>
+                    <div class="form-group">
+                        <label for="exp-company">Company</label>
+                        <input type="text" id="exp-company" class="form-control" placeholder="Tech Company">
+                    </div>
+                    <div class="form-group">
+                        <label for="exp-date">Date</label>
+                        <input type="text" id="exp-date" class="form-control" placeholder="Jan 2020 - Present">
+                    </div>
+                    <div class="form-group">
+                        <label for="exp-description">Description</label>
+                        <textarea id="exp-description" class="form-control" rows="3" placeholder="Describe your responsibilities and achievements..."></textarea>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="phone">Phone</label>
-                    <input type="tel" id="phone" class="form-control" placeholder="+1 234 567 8900">
+
+                <h3>Education</h3>
+                <div class="form-section">
+                    <div class="form-group">
+                        <label for="edu-degree">Degree</label>
+                        <input type="text" id="edu-degree" class="form-control" placeholder="Bachelor of Science">
+                    </div>
+                    <div class="form-group">
+                        <label for="edu-school">School</label>
+                        <input type="text" id="edu-school" class="form-control" placeholder="University Name">
+                    </div>
+                    <div class="form-group">
+                        <label for="edu-date">Date</label>
+                        <input type="text" id="edu-date" class="form-control" placeholder="2015 - 2019">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="location">Location</label>
-                    <input type="text" id="location" class="form-control" placeholder="New York, NY">
-                </div>
-                <div class="form-group">
-                    <label for="website">Website</label>
-                    <input type="text" id="website" class="form-control" placeholder="www.example.com">
+
+                <h3>Skills</h3>
+                <div class="form-section">
+                    <div class="form-group">
+                        <label for="skills">Skills (comma separated)</label>
+                        <input type="text" id="skills" class="form-control" placeholder="JavaScript, React, Node.js, MongoDB">
+                    </div>
                 </div>
             </div>
 
-            <h3>Summary</h3>
-            <div class="form-section">
+            <div class="feature-panel" id="ai-panel">
+                <h3>AI Content Assistant</h3>
+                <div class="ai-suggestion">
+                    <div class="ai-suggestion-header">
+                        <div class="ai-suggestion-title">
+                            <i class="material-icons">auto_awesome</i>
+                            Professional Summary
+                        </div>
+                        <div class="ai-suggestion-actions">
+                            <button class="ai-suggestion-action" title="Accept">
+                                <i class="material-icons">check</i>
+                            </button>
+                            <button class="ai-suggestion-action" title="Regenerate">
+                                <i class="material-icons">refresh</i>
+                            </button>
+                        </div>
+                    </div>
+                    <p>Experienced software developer with 5+ years of expertise in full-stack development, specializing in JavaScript, React, and Node.js. Proven track record of delivering high-quality solutions that improve business efficiency and user experience.</p>
+                </div>
+
+                <div class="ai-suggestion">
+                    <div class="ai-suggestion-header">
+                        <div class="ai-suggestion-title">
+                            <i class="material-icons">auto_awesome</i>
+                            Experience Description
+                        </div>
+                        <div class="ai-suggestion-actions">
+                            <button class="ai-suggestion-action" title="Accept">
+                                <i class="material-icons">check</i>
+                            </button>
+                            <button class="ai-suggestion-action" title="Regenerate">
+                                <i class="material-icons">refresh</i>
+                            </button>
+                        </div>
+                    </div>
+                    <p>Led a team of 5 developers to redesign the company's flagship product, resulting in a 40% increase in user engagement and a 25% reduction in support tickets. Implemented automated testing processes that reduced bugs by 60% and improved deployment frequency.</p>
+                </div>
+
+                <div class="ai-suggestion">
+                    <div class="ai-suggestion-header">
+                        <div class="ai-suggestion-title">
+                            <i class="material-icons">auto_awesome</i>
+                            Skills Optimization
+                        </div>
+                        <div class="ai-suggestion-actions">
+                            <button class="ai-suggestion-action" title="Accept">
+                                <i class="material-icons">check</i>
+                            </button>
+                            <button class="ai-suggestion-action" title="Regenerate">
+                                <i class="material-icons">refresh</i>
+                            </button>
+                        </div>
+                    </div>
+                    <p>Based on your experience, we recommend adding these skills: TypeScript, GraphQL, Docker, AWS, CI/CD, Agile Methodologies. These are highly sought after in your field and will increase your visibility to recruiters.</p>
+                </div>
+
                 <div class="form-group">
-                    <label for="summary">Professional Summary</label>
-                    <textarea id="summary" class="form-control" rows="4" placeholder="Brief description about yourself..."></textarea>
+                    <label for="ai-prompt">Ask AI for help</label>
+                    <textarea id="ai-prompt" class="form-control" rows="3" placeholder="Ask the AI to help with any part of your resume..."></textarea>
+                    <button class="btn btn-primary" style="margin-top: 0.5rem;">
+                        <i class="material-icons">send</i>
+                        Generate
+                    </button>
                 </div>
             </div>
 
-            <h3>Experience</h3>
-            <div class="form-section">
-                <div class="form-group">
-                    <label for="exp-title">Job Title</label>
-                    <input type="text" id="exp-title" class="form-control" placeholder="Software Developer">
+            <div class="feature-panel" id="customize-panel">
+                <h3>Customization</h3>
+                
+                <div class="customization-panel">
+                    <div class="customization-title">Color Palette</div>
+                    <div class="color-palette">
+                        <div class="color-option active" style="background-color: #6366f1;" data-color="#6366f1"></div>
+                        <div class="color-option" style="background-color: #f43f5e;" data-color="#f43f5e"></div>
+                        <div class="color-option" style="background-color: #10b981;" data-color="#10b981"></div>
+                        <div class="color-option" style="background-color: #f59e0b;" data-color="#f59e0b"></div>
+                        <div class="color-option" style="background-color: #8b5cf6;" data-color="#8b5cf6"></div>
+                        <div class="color-option" style="background-color: #06b6d4;" data-color="#06b6d4"></div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="exp-company">Company</label>
-                    <input type="text" id="exp-company" class="form-control" placeholder="Tech Company">
+
+                <div class="customization-panel">
+                    <div class="customization-title">Typography</div>
+                    <div class="font-selector">
+                        <button class="font-option active" data-font="Inter">Inter</button>
+                        <button class="font-option" data-font="Roboto">Roboto</button>
+                        <button class="font-option" data-font="Open Sans">Open Sans</button>
+                        <button class="font-option" data-font="Lato">Lato</button>
+                        <button class="font-option" data-font="Montserrat">Montserrat</button>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="exp-date">Date</label>
-                    <input type="text" id="exp-date" class="form-control" placeholder="Jan 2020 - Present">
-                </div>
-                <div class="form-group">
-                    <label for="exp-description">Description</label>
-                    <textarea id="exp-description" class="form-control" rows="3" placeholder="Describe your responsibilities and achievements..."></textarea>
+
+                <div class="customization-panel">
+                    <div class="customization-title">Layout Options</div>
+                    <div class="layout-options">
+                        <div class="layout-option active" data-layout="default">
+                            <i class="material-icons">view_agenda</i>
+                        </div>
+                        <div class="layout-option" data-layout="sidebar">
+                            <i class="material-icons">view_sidebar</i>
+                        </div>
+                        <div class="layout-option" data-layout="compact">
+                            <i class="material-icons">view_compact</i>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <h3>Education</h3>
-            <div class="form-section">
-                <div class="form-group">
-                    <label for="edu-degree">Degree</label>
-                    <input type="text" id="edu-degree" class="form-control" placeholder="Bachelor of Science">
-                </div>
-                <div class="form-group">
-                    <label for="edu-school">School</label>
-                    <input type="text" id="edu-school" class="form-control" placeholder="University Name">
-                </div>
-                <div class="form-group">
-                    <label for="edu-date">Date</label>
-                    <input type="text" id="edu-date" class="form-control" placeholder="2015 - 2019">
+            <div class="feature-panel" id="accessibility-panel">
+                <h3>Accessibility Options</h3>
+                
+                <div class="accessibility-panel">
+                    <div class="accessibility-option">
+                        <div class="accessibility-label">
+                            <div class="accessibility-name">High Contrast Mode</div>
+                            <div class="accessibility-description">Increase contrast for better visibility</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="high-contrast">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="accessibility-option">
+                        <div class="accessibility-label">
+                            <div class="accessibility-name">Large Text</div>
+                            <div class="accessibility-description">Increase font size for better readability</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="large-text">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="accessibility-option">
+                        <div class="accessibility-label">
+                            <div class="accessibility-name">Screen Reader Support</div>
+                            <div class="accessibility-description">Optimize for screen readers</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="screen-reader">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="accessibility-option">
+                        <div class="accessibility-label">
+                            <div class="accessibility-name">Focus Indicators</div>
+                            <div class="accessibility-description">Enhance focus indicators for keyboard navigation</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="focus-indicators">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="accessibility-option">
+                        <div class="accessibility-label">
+                            <div class="accessibility-name">Reduced Motion</div>
+                            <div class="accessibility-description">Minimize animations for users with motion sensitivity</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="reduced-motion">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
                 </div>
             </div>
 
-            <h3>Skills</h3>
-            <div class="form-section">
-                <div class="form-group">
-                    <label for="skills">Skills (comma separated)</label>
-                    <input type="text" id="skills" class="form-control" placeholder="JavaScript, React, Node.js, MongoDB">
+            <div class="feature-panel" id="future-panel">
+                <h3>Future Technologies</h3>
+                
+                <div class="future-panel">
+                    <div class="future-feature">
+                        <div class="future-icon">
+                            <i class="material-icons">qr_code_scanner</i>
+                        </div>
+                        <div class="future-info">
+                            <div class="future-name">QR Code Generation</div>
+                            <div class="future-description">Generate a QR code that links to your digital resume</div>
+                        </div>
+                        <div class="future-status">Available</div>
+                    </div>
+
+                    <div class="future-feature">
+                        <div class="future-icon">
+                            <i class="material-icons">videocam</i>
+                        </div>
+                        <div class="future-info">
+                            <div class="future-name">Video Resume</div>
+                            <div class="future-description">Add a short video introduction to your resume</div>
+                        </div>
+                        <div class="future-status">Available</div>
+                    </div>
+
+                    <div class="future-feature">
+                        <div class="future-icon">
+                            <i class="material-icons">language</i>
+                        </div>
+                        <div class="future-info">
+                            <div class="future-name">Multi-language Support</div>
+                            <div class="future-description">Create your resume in multiple languages</div>
+                        </div>
+                        <div class="future-status">Available</div>
+                    </div>
+
+                    <div class="future-feature">
+                        <div class="future-icon">
+                            <i class="material-icons">analytics</i>
+                        </div>
+                        <div class="future-info">
+                            <div class="future-name">ATS Optimization</div>
+                            <div class="future-description">Optimize your resume for Applicant Tracking Systems</div>
+                        </div>
+                        <div class="future-status">Available</div>
+                    </div>
+
+                    <div class="future-feature">
+                        <div class="future-icon">
+                            <i class="material-icons">mic</i>
+                        </div>
+                        <div class="future-info">
+                            <div class="future-name">Voice Commands</div>
+                            <div class="future-description">Control the app with voice commands</div>
+                        </div>
+                        <div class="future-status">Coming Soon</div>
+                    </div>
+
+                    <div class="future-feature">
+                        <div class="future-icon">
+                            <i class="material-icons">view_in_ar</i>
+                        </div>
+                        <div class="future-info">
+                            <div class="future-name">AR Resume</div>
+                            <div class="future-description">Create an augmented reality version of your resume</div>
+                        </div>
+                        <div class="future-status">Coming Soon</div>
+                    </div>
                 </div>
             </div>
         </aside>
@@ -230,6 +2268,14 @@
                     <i class="material-icons">print</i>
                     Print
                 </button>
+                <button class="btn btn-secondary" id="qr-btn">
+                    <i class="material-icons">qr_code</i>
+                    QR Code
+                </button>
+                <button class="btn btn-secondary" id="video-btn">
+                    <i class="material-icons">videocam</i>
+                    Video
+                </button>
                 <button class="btn btn-primary" id="download-pdf-btn">
                     <i class="material-icons">picture_as_pdf</i>
                     Download PDF
@@ -238,8 +2284,986 @@
         </main>
     </div>
 
+    <!-- Analytics Modal -->
+    <div class="modal" id="analytics-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Resume Analytics</h2>
+                <button class="modal-close" id="analytics-close">
+                    <i class="material-icons">close</i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="analytics-card">
+                    <h4>Resume Performance</h4>
+                    <div class="analytics-chart">
+                        <canvas id="performance-chart"></canvas>
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <h4>Key Metrics</h4>
+                    <div class="analytics-metric">
+                        <div class="analytics-metric-label">Total Views</div>
+                        <div class="analytics-metric-value">247</div>
+                    </div>
+                    <div class="analytics-metric">
+                        <div class="analytics-metric-label">Downloads</div>
+                        <div class="analytics-metric-value">42</div>
+                    </div>
+                    <div class="analytics-metric">
+                        <div class="analytics-metric-label">Application Success Rate</div>
+                        <div class="analytics-metric-value">68%</div>
+                    </div>
+                    <div class="analytics-metric">
+                        <div class="analytics-metric-label">Most Viewed Section</div>
+                        <div class="analytics-metric-value">Experience</div>
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <h4>ATS Optimization Score</h4>
+                    <div class="analytics-metric">
+                        <div class="analytics-metric-label">Keyword Match</div>
+                        <div class="analytics-metric-value">85%</div>
+                    </div>
+                    <div class="analytics-metric">
+                        <div class="analytics-metric-label">Readability</div>
+                        <div class="analytics-metric-value">92%</div>
+                    </div>
+                    <div class="analytics-metric">
+                        <div class="analytics-metric-label">Structure</div>
+                        <div class="analytics-metric-value">78%</div>
+                    </div>
+                    <div class="analytics-metric">
+                        <div class="analytics-metric-label">Overall Score</div>
+                        <div class="analytics-metric-value">85%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Collaboration Modal -->
+    <div class="modal" id="collaboration-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Collaboration</h2>
+                <button class="modal-close" id="collaboration-close">
+                    <i class="material-icons">close</i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="collaboration-panel">
+                    <div class="collaboration-header">
+                        <h3 class="collaboration-title">Share Your Resume</h3>
+                        <a href="#" class="collaboration-link">
+                            <i class="material-icons">link</i>
+                            Copy Link
+                        </a>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" value="https://cv-builder.app/share/abc123" readonly>
+                    </div>
+                </div>
+
+                <div class="collaboration-panel">
+                    <div class="collaboration-header">
+                        <h3 class="collaboration-title">Recent Feedback</h3>
+                    </div>
+                    <ul class="collaboration-list">
+                        <li class="collaboration-item">
+                            <div class="collaboration-avatar">JD</div>
+                            <div class="collaboration-info">
+                                <div class="collaboration-name">Jane Doe</div>
+                                <div class="collaboration-date">2 days ago</div>
+                            </div>
+                            <div class="collaboration-status status-approved">Approved</div>
+                        </li>
+                        <li class="collaboration-item">
+                            <div class="collaboration-avatar">RS</div>
+                            <div class="collaboration-info">
+                                <div class="collaboration-name">Robert Smith</div>
+                                <div class="collaboration-date">1 week ago</div>
+                            </div>
+                            <div class="collaboration-status status-pending">Pending</div>
+                        </li>
+                        <li class="collaboration-item">
+                            <div class="collaboration-avatar">MJ</div>
+                            <div class="collaboration-info">
+                                <div class="collaboration-name">Mary Johnson</div>
+                                <div class="collaboration-date">2 weeks ago</div>
+                            </div>
+                            <div class="collaboration-status status-rejected">Rejected</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="collaboration-panel">
+                    <div class="collaboration-header">
+                        <h3 class="collaboration-title">Invite Collaborators</h3>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" class="form-control" placeholder="Enter email address">
+                    </div>
+                    <button class="btn btn-primary">
+                        <i class="material-icons">send</i>
+                        Send Invitation
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Integrations Modal -->
+    <div class="modal" id="integrations-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Integrations</h2>
+                <button class="modal-close" id="integrations-close">
+                    <i class="material-icons">close</i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="integration-card">
+                    <div class="integration-icon">
+                        <i class="material-icons">language</i>
+                    </div>
+                    <div class="integration-info">
+                        <div class="integration-name">LinkedIn</div>
+                        <div class="integration-description">Import your profile data from LinkedIn</div>
+                        <div class="integration-status">
+                            <i class="material-icons status-connected">check_circle</i>
+                            <span>Connected</span>
+                        </div>
+                    </div>
+                    <button class="integration-action disconnect-btn">Disconnect</button>
+                </div>
+
+                <div class="integration-card">
+                    <div class="integration-icon">
+                        <i class="material-icons">cloud</i>
+                    </div>
+                    <div class="integration-info">
+                        <div class="integration-name">Google Drive</div>
+                        <div class="integration-description">Save your resumes to Google Drive</div>
+                        <div class="integration-status">
+                            <i class="material-icons status-connected">check_circle</i>
+                            <span>Connected</span>
+                        </div>
+                    </div>
+                    <button class="integration-action disconnect-btn">Disconnect</button>
+                </div>
+
+                <div class="integration-card">
+                    <div class="integration-icon">
+                        <i class="material-icons">description</i>
+                    </div>
+                    <div class="integration-info">
+                        <div class="integration-name">GitHub</div>
+                        <div class="integration-description">Showcase your projects from GitHub</div>
+                        <div class="integration-status">
+                            <i class="material-icons status-disconnected">radio_button_unchecked</i>
+                            <span>Not Connected</span>
+                        </div>
+                    </div>
+                    <button class="integration-action connect-btn">Connect</button>
+                </div>
+
+                <div class="integration-card">
+                    <div class="integration-icon">
+                        <i class="material-icons">calendar_today</i>
+                    </div>
+                    <div class="integration-info">
+                        <div class="integration-name">Google Calendar</div>
+                        <div class="integration-description">Schedule interviews and track deadlines</div>
+                        <div class="integration-status">
+                            <i class="material-icons status-disconnected">radio_button_unchecked</i>
+                            <span>Not Connected</span>
+                        </div>
+                    </div>
+                    <button class="integration-action connect-btn">Connect</button>
+                </div>
+
+                <div class="integration-card">
+                    <div class="integration-icon">
+                        <i class="material-icons">public</i>
+                    </div>
+                    <div class="integration-info">
+                        <div class="integration-name">Personal Website</div>
+                        <div class="integration-description">Create a personal website from your resume</div>
+                        <div class="integration-status">
+                            <i class="material-icons status-disconnected">radio_button_unchecked</i>
+                            <span>Not Connected</span>
+                        </div>
+                    </div>
+                    <button class="integration-action connect-btn">Connect</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QR Code Modal -->
+    <div class="modal" id="qr-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">QR Code</h2>
+                <button class="modal-close" id="qr-close">
+                    <i class="material-icons">close</i>
+                </button>
+            </div>
+            <div class="modal-body" style="text-align: center;">
+                <div style="background-color: white; padding: 2rem; border-radius: var(--radius); display: inline-block; margin-bottom: 1rem;">
+                    <div style="width: 200px; height: 200px; background-color: #f0f0f0; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                        <i class="material-icons" style="font-size: 48px; color: #999;">qr_code_2</i>
+                    </div>
+                </div>
+                <p>Scan this QR code to view your digital resume</p>
+                <button class="btn btn-primary">
+                    <i class="material-icons">download</i>
+                    Download QR Code
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Resume Modal -->
+    <div class="modal" id="video-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Video Resume</h2>
+                <button class="modal-close" id="video-close">
+                    <i class="material-icons">close</i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div style="background-color: #000; border-radius: var(--radius); height: 300px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <i class="material-icons" style="font-size: 48px; color: white;">videocam</i>
+                </div>
+                <div class="form-group">
+                    <label for="video-url">Video URL</label>
+                    <input type="text" id="video-url" class="form-control" placeholder="https://youtube.com/watch?v=...">
+                </div>
+                <div class="form-group">
+                    <label for="video-description">Video Description</label>
+                    <textarea id="video-description" class="form-control" rows="3" placeholder="Brief description of your video resume..."></textarea>
+                </div>
+                <button class="btn btn-primary">
+                    <i class="material-icons">save</i>
+                    Save Video Resume
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <button class="sidebar-toggle" id="sidebar-toggle">
+        <i class="material-icons">menu</i>
+    </button>
+
     <div class="toast" id="toast"></div>
 
-    <script src="script.js"></script>
+    <script>
+        // DOM Elements
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = themeToggle.querySelector('i');
+        const cvPreview = document.getElementById('cv-preview');
+        const templateOptions = document.querySelectorAll('.template-option');
+        const toast = document.getElementById('toast');
+        const resetBtn = document.getElementById('reset-btn');
+        const helpBtn = document.getElementById('help-btn');
+        const printBtn = document.getElementById('print-btn');
+        const downloadPdfBtn = document.getElementById('download-pdf-btn');
+        const qrBtn = document.getElementById('qr-btn');
+        const videoBtn = document.getElementById('video-btn');
+        const analyticsBtn = document.getElementById('analytics-btn');
+        const collaborationBtn = document.getElementById('collaboration-btn');
+        const integrationsBtn = document.getElementById('integrations-btn');
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const sidebar = document.getElementById('sidebar');
+        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+        const navLinks = document.getElementById('nav-links');
+
+        // Modal Elements
+        const analyticsModal = document.getElementById('analytics-modal');
+        const collaborationModal = document.getElementById('collaboration-modal');
+        const integrationsModal = document.getElementById('integrations-modal');
+        const qrModal = document.getElementById('qr-modal');
+        const videoModal = document.getElementById('video-modal');
+
+        // Modal Close Buttons
+        const analyticsClose = document.getElementById('analytics-close');
+        const collaborationClose = document.getElementById('collaboration-close');
+        const integrationsClose = document.getElementById('integrations-close');
+        const qrClose = document.getElementById('qr-close');
+        const videoClose = document.getElementById('video-close');
+
+        // Feature Tabs
+        const featureTabs = document.querySelectorAll('.feature-tab');
+        const featurePanels = document.querySelectorAll('.feature-panel');
+
+        // Form Elements
+        const fullNameInput = document.getElementById('full-name');
+        const jobTitleInput = document.getElementById('job-title');
+        const emailInput = document.getElementById('email');
+        const phoneInput = document.getElementById('phone');
+        const locationInput = document.getElementById('location');
+        const websiteInput = document.getElementById('website');
+        const summaryInput = document.getElementById('summary');
+        const expTitleInput = document.getElementById('exp-title');
+        const expCompanyInput = document.getElementById('exp-company');
+        const expDateInput = document.getElementById('exp-date');
+        const expDescriptionInput = document.getElementById('exp-description');
+        const eduDegreeInput = document.getElementById('edu-degree');
+        const eduSchoolInput = document.getElementById('edu-school');
+        const eduDateInput = document.getElementById('edu-date');
+        const skillsInput = document.getElementById('skills');
+
+        // Preview Elements
+        const previewName = document.getElementById('preview-name');
+        const previewTitle = document.getElementById('preview-title');
+        const previewEmail = document.getElementById('preview-email');
+        const previewPhone = document.getElementById('preview-phone');
+        const previewLocation = document.getElementById('preview-location');
+        const previewWebsite = document.getElementById('preview-website');
+        const previewSummary = document.getElementById('preview-summary');
+        const previewExpTitle = document.getElementById('preview-exp-title');
+        const previewExpCompany = document.getElementById('preview-exp-company');
+        const previewExpDate = document.getElementById('preview-exp-date');
+        const previewExpDescription = document.getElementById('preview-exp-description');
+        const previewEduDegree = document.getElementById('preview-edu-degree');
+        const previewEduSchool = document.getElementById('preview-edu-school');
+        const previewEduDate = document.getElementById('preview-edu-date');
+        const previewSkills = document.getElementById('preview-skills');
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check for saved theme preference or default to light mode
+            const currentTheme = localStorage.getItem('theme') || 'light';
+            if (currentTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                themeIcon.textContent = 'light_mode';
+            }
+
+            // Check for saved template preference
+            const savedTemplate = localStorage.getItem('template') || 'professional';
+            setActiveTemplate(savedTemplate);
+
+            // Load saved form data
+            loadFormData();
+
+            // Initialize performance chart
+            initPerformanceChart();
+        });
+
+        // Theme Toggle
+        themeToggle.addEventListener('click', () => {
+            const theme = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            document.body.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            themeIcon.textContent = theme === 'dark' ? 'light_mode' : 'dark_mode';
+        });
+
+        // Mobile Menu Toggle
+        mobileMenuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('show');
+        });
+
+        // Sidebar Toggle
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('show');
+        });
+
+        // Template Selection
+        templateOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                const template = option.getAttribute('data-template');
+                setActiveTemplate(template);
+                localStorage.setItem('template', template);
+                showToast(`Template changed to ${template}`);
+            });
+        });
+
+        function setActiveTemplate(template) {
+            // Remove all template classes
+            cvPreview.classList.remove(
+                'template-professional', 'template-modern', 'template-creative',
+                'template-minimal', 'template-dark', 'template-academic',
+                'template-executive', 'template-tech', 'template-creative2', 'template-portfolio'
+            );
+
+            // Add the selected template class
+            cvPreview.classList.add(`template-${template}`);
+
+            // Update active state in template selector
+            templateOptions.forEach(option => {
+                option.classList.remove('active');
+                if (option.getAttribute('data-template') === template) {
+                    option.classList.add('active');
+                }
+            });
+        }
+
+        // Feature Tabs
+        featureTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabName = tab.getAttribute('data-tab');
+                
+                // Update active tab
+                featureTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // Show corresponding panel
+                featurePanels.forEach(panel => {
+                    panel.classList.remove('active');
+                    if (panel.id === `${tabName}-panel`) {
+                        panel.classList.add('active');
+                    }
+                });
+            });
+        });
+
+        // Modal Functions
+        function openModal(modal) {
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modal) {
+            modal.classList.remove('show');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Modal Event Listeners
+        analyticsBtn.addEventListener('click', () => openModal(analyticsModal));
+        collaborationBtn.addEventListener('click', () => openModal(collaborationModal));
+        integrationsBtn.addEventListener('click', () => openModal(integrationsModal));
+        qrBtn.addEventListener('click', () => openModal(qrModal));
+        videoBtn.addEventListener('click', () => openModal(videoModal));
+
+        analyticsClose.addEventListener('click', () => closeModal(analyticsModal));
+        collaborationClose.addEventListener('click', () => closeModal(collaborationModal));
+        integrationsClose.addEventListener('click', () => closeModal(integrationsModal));
+        qrClose.addEventListener('click', () => closeModal(qrModal));
+        videoClose.addEventListener('click', () => closeModal(videoModal));
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === analyticsModal) closeModal(analyticsModal);
+            if (e.target === collaborationModal) closeModal(collaborationModal);
+            if (e.target === integrationsModal) closeModal(integrationsModal);
+            if (e.target === qrModal) closeModal(qrModal);
+            if (e.target === videoModal) closeModal(videoModal);
+        });
+
+        // Form Input Handlers
+        fullNameInput.addEventListener('input', () => {
+            previewName.textContent = fullNameInput.value || 'Your Name';
+            saveFormData();
+        });
+
+        jobTitleInput.addEventListener('input', () => {
+            previewTitle.textContent = jobTitleInput.value || 'Your Job Title';
+            saveFormData();
+        });
+
+        emailInput.addEventListener('input', () => {
+            previewEmail.textContent = emailInput.value || 'your.email@example.com';
+            saveFormData();
+        });
+
+        phoneInput.addEventListener('input', () => {
+            previewPhone.textContent = phoneInput.value || '+1 234 567 8900';
+            saveFormData();
+        });
+
+        locationInput.addEventListener('input', () => {
+            previewLocation.textContent = locationInput.value || 'Your Location';
+            saveFormData();
+        });
+
+        websiteInput.addEventListener('input', () => {
+            previewWebsite.textContent = websiteInput.value || 'www.yourwebsite.com';
+            saveFormData();
+        });
+
+        summaryInput.addEventListener('input', () => {
+            previewSummary.textContent = summaryInput.value || 'Your professional summary goes here. Briefly describe your background, skills, and what makes you a great candidate.';
+            saveFormData();
+        });
+
+        expTitleInput.addEventListener('input', () => {
+            previewExpTitle.textContent = expTitleInput.value || 'Job Title';
+            saveFormData();
+        });
+
+        expCompanyInput.addEventListener('input', () => {
+            previewExpCompany.textContent = expCompanyInput.value || 'Company Name';
+            saveFormData();
+        });
+
+        expDateInput.addEventListener('input', () => {
+            previewExpDate.textContent = expDateInput.value || 'Date';
+            saveFormData();
+        });
+
+        expDescriptionInput.addEventListener('input', () => {
+            previewExpDescription.textContent = expDescriptionInput.value || 'Description of your responsibilities and achievements in this role.';
+            saveFormData();
+        });
+
+        eduDegreeInput.addEventListener('input', () => {
+            previewEduDegree.textContent = eduDegreeInput.value || 'Degree';
+            saveFormData();
+        });
+
+        eduSchoolInput.addEventListener('input', () => {
+            previewEduSchool.textContent = eduSchoolInput.value || 'School Name';
+            saveFormData();
+        });
+
+        eduDateInput.addEventListener('input', () => {
+            previewEduDate.textContent = eduDateInput.value || 'Date';
+            saveFormData();
+        });
+
+        skillsInput.addEventListener('input', () => {
+            const skills = skillsInput.value.split(',').map(skill => skill.trim()).filter(skill => skill);
+            previewSkills.innerHTML = '';
+            
+            if (skills.length === 0) {
+                previewSkills.innerHTML = '<div class="skill-tag">Skill 1</div><div class="skill-tag">Skill 2</div><div class="skill-tag">Skill 3</div>';
+            } else {
+                skills.forEach(skill => {
+                    const skillTag = document.createElement('div');
+                    skillTag.className = 'skill-tag';
+                    skillTag.textContent = skill;
+                    previewSkills.appendChild(skillTag);
+                });
+            }
+            
+            saveFormData();
+        });
+
+        // Save Form Data to Local Storage
+        function saveFormData() {
+            const formData = {
+                fullName: fullNameInput.value,
+                jobTitle: jobTitleInput.value,
+                email: emailInput.value,
+                phone: phoneInput.value,
+                location: locationInput.value,
+                website: websiteInput.value,
+                summary: summaryInput.value,
+                expTitle: expTitleInput.value,
+                expCompany: expCompanyInput.value,
+                expDate: expDateInput.value,
+                expDescription: expDescriptionInput.value,
+                eduDegree: eduDegreeInput.value,
+                eduSchool: eduSchoolInput.value,
+                eduDate: eduDateInput.value,
+                skills: skillsInput.value
+            };
+            
+            localStorage.setItem('cvFormData', JSON.stringify(formData));
+        }
+
+        // Load Form Data from Local Storage
+        function loadFormData() {
+            const savedData = localStorage.getItem('cvFormData');
+            if (savedData) {
+                const formData = JSON.parse(savedData);
+                
+                fullNameInput.value = formData.fullName || '';
+                jobTitleInput.value = formData.jobTitle || '';
+                emailInput.value = formData.email || '';
+                phoneInput.value = formData.phone || '';
+                locationInput.value = formData.location || '';
+                websiteInput.value = formData.website || '';
+                summaryInput.value = formData.summary || '';
+                expTitleInput.value = formData.expTitle || '';
+                expCompanyInput.value = formData.expCompany || '';
+                expDateInput.value = formData.expDate || '';
+                expDescriptionInput.value = formData.expDescription || '';
+                eduDegreeInput.value = formData.eduDegree || '';
+                eduSchoolInput.value = formData.eduSchool || '';
+                eduDateInput.value = formData.eduDate || '';
+                skillsInput.value = formData.skills || '';
+                
+                // Trigger input events to update preview
+                fullNameInput.dispatchEvent(new Event('input'));
+                jobTitleInput.dispatchEvent(new Event('input'));
+                emailInput.dispatchEvent(new Event('input'));
+                phoneInput.dispatchEvent(new Event('input'));
+                locationInput.dispatchEvent(new Event('input'));
+                websiteInput.dispatchEvent(new Event('input'));
+                summaryInput.dispatchEvent(new Event('input'));
+                expTitleInput.dispatchEvent(new Event('input'));
+                expCompanyInput.dispatchEvent(new Event('input'));
+                expDateInput.dispatchEvent(new Event('input'));
+                expDescriptionInput.dispatchEvent(new Event('input'));
+                eduDegreeInput.dispatchEvent(new Event('input'));
+                eduSchoolInput.dispatchEvent(new Event('input'));
+                eduDateInput.dispatchEvent(new Event('input'));
+                skillsInput.dispatchEvent(new Event('input'));
+            }
+        }
+
+        // Reset Form
+        resetBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            if (confirm('Are you sure you want to reset all data?')) {
+                // Clear form inputs
+                fullNameInput.value = '';
+                jobTitleInput.value = '';
+                emailInput.value = '';
+                phoneInput.value = '';
+                locationInput.value = '';
+                websiteInput.value = '';
+                summaryInput.value = '';
+                expTitleInput.value = '';
+                expCompanyInput.value = '';
+                expDateInput.value = '';
+                expDescriptionInput.value = '';
+                eduDegreeInput.value = '';
+                eduSchoolInput.value = '';
+                eduDateInput.value = '';
+                skillsInput.value = '';
+                
+                // Reset preview
+                previewName.textContent = 'Your Name';
+                previewTitle.textContent = 'Your Job Title';
+                previewEmail.textContent = 'your.email@example.com';
+                previewPhone.textContent = '+1 234 567 8900';
+                previewLocation.textContent = 'Your Location';
+                previewWebsite.textContent = 'www.yourwebsite.com';
+                previewSummary.textContent = 'Your professional summary goes here. Briefly describe your background, skills, and what makes you a great candidate.';
+                previewExpTitle.textContent = 'Job Title';
+                previewExpCompany.textContent = 'Company Name';
+                previewExpDate.textContent = 'Date';
+                previewExpDescription.textContent = 'Description of your responsibilities and achievements in this role.';
+                previewEduDegree.textContent = 'Degree';
+                previewEduSchool.textContent = 'School Name';
+                previewEduDate.textContent = 'Date';
+                previewSkills.innerHTML = '<div class="skill-tag">Skill 1</div><div class="skill-tag">Skill 2</div><div class="skill-tag">Skill 3</div>';
+                
+                // Clear local storage
+                localStorage.removeItem('cvFormData');
+                
+                showToast('All data has been reset');
+            }
+        });
+
+        // Help Button
+        helpBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            showToast('Fill in your information in the form on the left, and it will appear in the preview on the right. Choose a template and download your CV when ready.');
+        });
+
+        // Print Function
+        printBtn.addEventListener('click', () => {
+            window.print();
+            showToast('Print dialog opened');
+        });
+
+        // Download PDF Function
+        downloadPdfBtn.addEventListener('click', () => {
+            downloadPdfBtn.innerHTML = '<span class="spinner"></span> Generating PDF...';
+            downloadPdfBtn.disabled = true;
+            
+            // Hide action buttons temporarily
+            const actionButtons = document.querySelector('.action-buttons');
+            actionButtons.style.display = 'none';
+            
+            // Use html2canvas and jsPDF to generate PDF
+            html2canvas(cvPreview, {
+                scale: 2,
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: document.body.getAttribute('data-theme') === 'dark' ? '#1a1a2e' : '#ffffff'
+            }).then(canvas => {
+                // Show action buttons again
+                actionButtons.style.display = 'flex';
+                
+                // Create PDF
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jspdf.jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'a4'
+                });
+                
+                const imgWidth = 210; // A4 width in mm
+                const pageHeight = 295; // A4 height in mm
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                let heightLeft = imgHeight;
+                let position = 0;
+                
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+                
+                while (heightLeft >= 0) {
+                    position = heightLeft - imgHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+                
+                // Download the PDF
+                pdf.save(`${fullNameInput.value || 'CV'}.pdf`);
+                
+                // Reset button
+                downloadPdfBtn.innerHTML = '<i class="material-icons">picture_as_pdf</i> Download PDF';
+                downloadPdfBtn.disabled = false;
+                
+                showToast('PDF downloaded successfully');
+            }).catch(error => {
+                // Show action buttons again
+                actionButtons.style.display = 'flex';
+                
+                // Reset button
+                downloadPdfBtn.innerHTML = '<i class="material-icons">picture_as_pdf</i> Download PDF';
+                downloadPdfBtn.disabled = false;
+                
+                showToast('Error generating PDF. Please try again.');
+                console.error('Error generating PDF:', error);
+            });
+        });
+
+        // QR Code Function
+        qrBtn.addEventListener('click', () => {
+            showToast('QR Code modal opened');
+        });
+
+        // Video Resume Function
+        videoBtn.addEventListener('click', () => {
+            showToast('Video Resume modal opened');
+        });
+
+        // Toast Notification
+        function showToast(message) {
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Initialize Performance Chart
+        function initPerformanceChart() {
+            const ctx = document.getElementById('performance-chart');
+            if (ctx) {
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [{
+                            label: 'Views',
+                            data: [12, 19, 23, 35, 42, 47],
+                            borderColor: '#6366f1',
+                            backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }, {
+                            label: 'Downloads',
+                            data: [3, 7, 9, 12, 15, 18],
+                            borderColor: '#22d3ee',
+                            backgroundColor: 'rgba(34, 211, 238, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Color Palette Selection
+        const colorOptions = document.querySelectorAll('.color-option');
+        colorOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                const color = option.getAttribute('data-color');
+                document.documentElement.style.setProperty('--primary-color', color);
+                
+                // Update active state
+                colorOptions.forEach(opt => opt.classList.remove('active'));
+                option.classList.add('active');
+                
+                showToast('Color theme updated');
+            });
+        });
+
+        // Font Selection
+        const fontOptions = document.querySelectorAll('.font-option');
+        fontOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                const font = option.getAttribute('data-font');
+                document.body.style.fontFamily = `'${font}', sans-serif`;
+                
+                // Update active state
+                fontOptions.forEach(opt => opt.classList.remove('active'));
+                option.classList.add('active');
+                
+                showToast('Font updated');
+            });
+        });
+
+        // Layout Selection
+        const layoutOptions = document.querySelectorAll('.layout-option');
+        layoutOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                const layout = option.getAttribute('data-layout');
+                
+                // Update active state
+                layoutOptions.forEach(opt => opt.classList.remove('active'));
+                option.classList.add('active');
+                
+                showToast(`Layout changed to ${layout}`);
+            });
+        });
+
+        // Accessibility Options
+        const highContrastToggle = document.getElementById('high-contrast');
+        const largeTextToggle = document.getElementById('large-text');
+        const screenReaderToggle = document.getElementById('screen-reader');
+        const focusIndicatorsToggle = document.getElementById('focus-indicators');
+        const reducedMotionToggle = document.getElementById('reduced-motion');
+
+        highContrastToggle.addEventListener('change', () => {
+            if (highContrastToggle.checked) {
+                document.body.classList.add('high-contrast');
+                showToast('High contrast mode enabled');
+            } else {
+                document.body.classList.remove('high-contrast');
+                showToast('High contrast mode disabled');
+            }
+        });
+
+        largeTextToggle.addEventListener('change', () => {
+            if (largeTextToggle.checked) {
+                document.body.classList.add('large-text');
+                showToast('Large text enabled');
+            } else {
+                document.body.classList.remove('large-text');
+                showToast('Large text disabled');
+            }
+        });
+
+        screenReaderToggle.addEventListener('change', () => {
+            if (screenReaderToggle.checked) {
+                document.body.classList.add('screen-reader');
+                showToast('Screen reader support enabled');
+            } else {
+                document.body.classList.remove('screen-reader');
+                showToast('Screen reader support disabled');
+            }
+        });
+
+        focusIndicatorsToggle.addEventListener('change', () => {
+            if (focusIndicatorsToggle.checked) {
+                document.body.classList.add('focus-indicators');
+                showToast('Enhanced focus indicators enabled');
+            } else {
+                document.body.classList.remove('focus-indicators');
+                showToast('Enhanced focus indicators disabled');
+            }
+        });
+
+        reducedMotionToggle.addEventListener('change', () => {
+            if (reducedMotionToggle.checked) {
+                document.body.classList.add('reduced-motion');
+                showToast('Reduced motion enabled');
+            } else {
+                document.body.classList.remove('reduced-motion');
+                showToast('Reduced motion disabled');
+            }
+        });
+
+        // AI Suggestion Actions
+        const aiSuggestionActions = document.querySelectorAll('.ai-suggestion-action');
+        aiSuggestionActions.forEach(action => {
+            action.addEventListener('click', () => {
+                if (action.title === 'Accept') {
+                    showToast('Suggestion accepted');
+                } else if (action.title === 'Regenerate') {
+                    showToast('Generating new suggestion...');
+                    setTimeout(() => {
+                        showToast('New suggestion generated');
+                    }, 1500);
+                }
+            });
+        });
+
+        // Integration Actions
+        const integrationActions = document.querySelectorAll('.integration-action');
+        integrationActions.forEach(action => {
+            action.addEventListener('click', () => {
+                if (action.classList.contains('connect-btn')) {
+                    action.textContent = 'Connecting...';
+                    action.disabled = true;
+                    
+                    setTimeout(() => {
+                        action.textContent = 'Disconnect';
+                        action.classList.remove('connect-btn');
+                        action.classList.add('disconnect-btn');
+                        action.disabled = false;
+                        
+                        const statusElement = action.parentElement.querySelector('.integration-status');
+                        statusElement.innerHTML = '<i class="material-icons status-connected">check_circle</i><span>Connected</span>';
+                        
+                        showToast('Integration connected successfully');
+                    }, 1500);
+                } else if (action.classList.contains('disconnect-btn')) {
+                    action.textContent = 'Disconnecting...';
+                    action.disabled = true;
+                    
+                    setTimeout(() => {
+                        action.textContent = 'Connect';
+                        action.classList.remove('disconnect-btn');
+                        action.classList.add('connect-btn');
+                        action.disabled = false;
+                        
+                        const statusElement = action.parentElement.querySelector('.integration-status');
+                        statusElement.innerHTML = '<i class="material-icons status-disconnected">radio_button_unchecked</i><span>Not Connected</span>';
+                        
+                        showToast('Integration disconnected');
+                    }, 1000);
+                }
+            });
+        });
+
+        // Add animation to elements when they come into view
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
 </body>
 </html>
